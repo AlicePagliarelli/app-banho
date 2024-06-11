@@ -12,8 +12,10 @@ export const Container = styled.SafeAreaView`
 `;
 
 export const Scroller = styled.ScrollView`
+  zIndex: 10;
+  background-color: #FFF;
   flex: 1;
-  padding: 20px;
+  padding: 10px;
 `;
 
 export const HeaderArea = styled.View`
@@ -38,54 +40,64 @@ const Veterinaria = () => {
 
     const renderService = (name, price) => (
         <View style={styles.serviceContainer}>
-            <Text style={styles.serviceName}>{name}</Text>
-            <Text style={styles.servicePrice}>{price}</Text>
+            <Text style={styles.serviceText}>
+            {name}
+            {'\n'}
+            {price}
+        </Text>
             <TouchableOpacity style={styles.bookButton}>
                 <Text style={styles.bookButtonText}>Agendar</Text>
             </TouchableOpacity>
         </View>
     );
     const styles = StyleSheet.create({
+        serviceText: {
+            fontWeight: 'bold',
+        },
         servicesOverlayContainer: {
             position: 'relative',
             padding: 20,
+
         },
         servicesList: {
             zIndex: 1,
         },
         overlayContainer: {
+            borderRadius: 7,
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: '#ffff', // or 'rgba(255, 255, 255, 0.8)' for transparency
+            backgroundColor: '#FFF', // or 'rgba(255, 255, 255, 0.8)' for transparency
             justifyContent: 'center',
             alignItems: 'center',
             zIndex: 0,
+            shadowColor: '#000',
         },
         servicesTitle: {
-            fontSize: 18,
+            color: '#51899B',
+            fontSize: 20,
             fontWeight: 'bold',
-            marginBottom: 10,
+            marginBottom: -5,
         },
         serviceContainer: {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            paddingVertical: 10,
+            paddingVertical: 40,
             borderBottomWidth: 1,
             borderBottomColor: '#ccc',
         },
         serviceName: {
-            fontSize: 14,
-            color: '#51899B',
+            fontSize: 15,
+            color: 'black',
             fontWeight: 'bold',
         },
         servicePrice: {
             fontSize: 14,
             fontWeight: 'bold',
-            color: '#51899B',
+            color: 'black',
         },
         bookButton: {
             backgroundColor: '#4C8EA4',
@@ -98,20 +110,22 @@ const Veterinaria = () => {
         },
         review: {
             padding: 20,
-            backgroundColor: '#fff',
+            backgroundColor: '#4C8EA4',
             borderRadius: 10,
             margin: 20,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
+            shadowOpacity: 0.30,
+            shadowRadius: 3.87,
             elevation: 5,
         },
         reviewText: {
             fontSize: 14,
-            color: '#000',
+            color: '#fff',
         },
         reviewVetName: {
+            color: '#fff',
+            fontSize: 16,
             fontWeight: 'bold',
         },
     });
@@ -121,14 +135,14 @@ const Veterinaria = () => {
             <HeaderArea>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
                     <TouchableOpacity style={{ marginLeft: -20 }} onPress={() => navigation.navigate('Home')}>
-                        <Icon name="arrow-left" size={25} marginRight={12} marginLeft={8} marginTop={2} color="#000" />
+                        <Icon name="arrow-left" size={25} marginRight={15} marginLeft={20} marginTop={25} color="white" />
                     </TouchableOpacity>
-                    <HeaderTitle>
-                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFF' }}>Veterinária A</Text>
+                    <HeaderTitle marginTop={20}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFF' }}>Veterinária A</Text>
                     </HeaderTitle>
                 </View>
 
-                <View style={{ flexDirection: 'row' }} marginLeft={-20} marginTop={10}>
+                <View style={{ flexDirection: 'row' }} marginLeft={-20} marginTop={35}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         {[...Array(5)].map((_, i) => (
                             <Icon key={i} name="star" size={14} color="#FFD700" style={{ marginRight: 1, }} /> // Add marginRight
@@ -137,32 +151,33 @@ const Veterinaria = () => {
                     </View>
 
                     <TouchableOpacity>
-                        <Icon name="heart" size={20} color="black" marginTop={2} marginLeft={-120} />
+                        <Icon name="heart" size={20} color="white" marginTop={2} marginLeft={-125} />
                     </TouchableOpacity>
                 </View>
             </HeaderArea>
 
-            <Scroller>
+            
                 {/* Services Section */}
+                <Scroller>
                 <View style={styles.servicesOverlayContainer}>
                     <View style={styles.servicesList}>
                         <Text style={styles.servicesTitle}>Lista de serviços</Text>
-                        {renderService('Banho (Porte pequeno)', 'R$ 35,00')}
-                        {renderService('Banho + Tosa (Porte pequeno)', 'R$ 75,00')}
-                        {renderService('Banho (Porte médio)', 'R$ 45,00')}
-                        {renderService('Banho + Tosa (Porte médio)', 'R$ 85,00')}
+                        {renderService('Banho (Pequeno)', 'R$ 35,00')}
+                        {renderService('Banho + Tosa (Pequeno)','R$ 75,00')}
+                        {renderService('Banho (Médio)', 'R$ 45,00')}
+                        {renderService('Banho + Tosa (Médio)', 'R$ 85,00')}
                     </View>
-                    <View style={styles.overlayContainer} />
                 </View>
+                </Scroller>
 
                 {/* Review Section */}
                 <View style={styles.review}>
                     <Text style={styles.reviewText}>
-                        <Text style={styles.reviewVetName}>Veterinária A </Text>
+                        <Text style={styles.reviewVetName}>Veterinária A {"\n"}</Text>
                         Muito bom o atendimento. Recomendo demais!
                     </Text>
                 </View>
-            </Scroller>
+
         </Container>
     );
 };
