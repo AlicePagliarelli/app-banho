@@ -19,8 +19,12 @@ const Cadastro = () => {
   };
 
   return (
-    <View style={styles.container} >
-      <Image style={styles.image} source={require('../assets/pet.png')} />
+    <View style={styles.container} >      
+    <Image
+    style={styles.image}
+    source={{ uri: 'https://uploaddeimagens.com.br/images/004/797/086/original/pet_1.png?1718153010' }}
+    onError={(error) => console.error('Error loading image:', error)}
+  />
       <View style={styles.formContainer}>
         <View style={styles.inputArea}>
         <View style={styles.signInput}>
@@ -99,10 +103,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   image: {
-    backgroundColor:'black',
     marginBottom: 20,
-    width: 200,
-    height: 200,
+    width: 220,
+    height: 220,
   },
   inputArea: {
     width: '100%',

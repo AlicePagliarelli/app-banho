@@ -31,7 +31,13 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require('../assets/pet.png')} />
+      <Image
+        style={styles.image}
+        source={{ uri: 'https://uploaddeimagens.com.br/images/004/797/086/original/pet_1.png?1718153010' }}
+        onError={(error) => console.error('Error loading image:', error)}
+      />
+
+
       <View style={styles.formContainer}>
         <View style={styles.inputArea}>
           <View style={styles.signInput}>
@@ -62,7 +68,7 @@ const Login = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.signMessageButton}
         onPress={() => navigation.navigate('Cadastro')}
       >
@@ -97,9 +103,10 @@ const styles = StyleSheet.create({
   },
   image: {
     marginBottom: 20,
-    width: 200,
-    height: 200,
+    width: 250, // Ajuste o tamanho da imagem
+    height: 250, // Ajuste o tamanho da imagem
   },
+
   inputArea: {
     width: '100%',
   },

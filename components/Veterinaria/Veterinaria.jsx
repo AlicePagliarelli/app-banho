@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
 
 // --- Your Styled Components ---
 export const Container = styled.SafeAreaView`
@@ -35,17 +36,38 @@ export const HeaderTitle = styled.Text`
 
 // ... (Your other styled components: SearchButton, LocationArea, etc.)
 
+
 const Veterinaria = () => {
     const navigation = useNavigation();
+    const route = useRoute();
+    const { veterinariaId } = route.params;
+    const [data, setData] = useState([]);
+    const [error, setError] = useState(null);
+    console.log('ID da clínica:', veterinariaId);
+    useEffect(() => {
+        fetch(`http://192.168.10.59:5000/api/veterinarias/${veterinariaId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setData(data);
+            })
+            .catch(error => {
+                setError(error);
+            });
+    }, [veterinariaId]); // Adicionando 'veterinariaId' como dependência
 
-    const renderService = (name, price) => (
+    const renderService = (_id, name, price) => (
         <View style={styles.serviceContainer}>
             <Text style={styles.serviceText}>
-            {name}
-            {'\n'}
-            {price}
-        </Text>
-            <TouchableOpacity style={styles.bookButton}>
+                {name}
+                {'\n'}
+                {price}
+            </Text>
+            <TouchableOpacity style={styles.bookButton}  onPress={() => navigation.navigate('Agendamento', { servicoId: _id , veterinariaId })}>
                 <Text style={styles.bookButtonText}>Agendar</Text>
             </TouchableOpacity>
         </View>
@@ -138,7 +160,7 @@ const Veterinaria = () => {
                         <Icon name="arrow-left" size={25} marginRight={15} marginLeft={20} marginTop={25} color="white" />
                     </TouchableOpacity>
                     <HeaderTitle marginTop={20}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFF' }}>Veterinária A</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFF' }}>{data.nome}</Text>
                     </HeaderTitle>
                 </View>
 
@@ -147,7 +169,7 @@ const Veterinaria = () => {
                         {[...Array(5)].map((_, i) => (
                             <Icon key={i} name="star" size={14} color="#FFD700" style={{ marginRight: 1, }} /> // Add marginRight
                         ))}
-                        <Text style={{  fontSize: 14, color: '#FFD700' }} marginLeft={4}>5.0</Text>
+                        <Text style={{ fontSize: 14, color: '#FFD700' }} marginLeft={4}>5.0</Text>
                     </View>
 
                     <TouchableOpacity>
@@ -155,28 +177,32 @@ const Veterinaria = () => {
                     </TouchableOpacity>
                 </View>
             </HeaderArea>
-
-            
-                {/* Services Section */}
-                <Scroller>
+            {/* Services Section */}
+            <Scroller>
                 <View style={styles.servicesOverlayContainer}>
                     <View style={styles.servicesList}>
                         <Text style={styles.servicesTitle}>Lista de serviços</Text>
-                        {renderService('Banho (Pequeno)', 'R$ 35,00')}
-                        {renderService('Banho + Tosa (Pequeno)','R$ 75,00')}
-                        {renderService('Banho (Médio)', 'R$ 45,00')}
-                        {renderService('Banho + Tosa (Médio)', 'R$ 85,00')}
+
+                        {/* Check if data.servicos exists and is not empty */}
+                        {data.servicos && data.servicos.length > 0 ? (
+                            data.servicos.map(service => (
+                                renderService(service._id, service.nome, `R$ ${service.preco.toFixed(2)}`)
+                            ))
+                        ) : (
+                            <Text>Nenhum serviço disponível</Text>
+                        )}
                     </View>
                 </View>
-                </Scroller>
+            </Scroller>
 
-                {/* Review Section */}
-                <View style={styles.review}>
-                    <Text style={styles.reviewText}>
-                        <Text style={styles.reviewVetName}>Veterinária A {"\n"}</Text>
-                        Muito bom o atendimento. Recomendo demais!
-                    </Text>
-                </View>
+
+            {/* Review Section */}
+            <View style={styles.review}>
+                <Text style={styles.reviewText}>
+                    <Text style={styles.reviewVetName}>{data.nome} {"\n"}</Text>
+                    Muito bom o atendimento. Recomendo demais!
+                </Text>
+            </View>
 
         </Container>
     );

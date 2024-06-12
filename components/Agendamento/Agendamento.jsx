@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'; // Import necessary components
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import styled from 'styled-components/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { useNavigation } from '@react-navigation/native';
+
 // --- Your Styled Components ---
 export const Container = styled.SafeAreaView`
   flex: 1;
@@ -43,8 +44,26 @@ const Agendamento = () => {
   const [selectedDate, setSelectedDate] = useState(moment().format('DD'));
   const [selectedTime, setSelectedTime] = useState('16:00');
   const [currentMonth, setCurrentMonth] = useState(moment());
+  const route = useRoute();
+  const [data, setData] = useState([]);
+  const { servicoId, veterinariaId } = route.params;
   const navigation = useNavigation();
-
+  console.log(servicoId,veterinariaId);
+  useEffect(() => {
+    fetch(`http://192.168.10.59:5000/api/veterinarias/${veterinariaId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            setData(data);
+        })
+        .catch(error => {
+            setError(error);
+        });
+}, [veterinariaId]);
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -101,7 +120,7 @@ const Agendamento = () => {
                         <Icon name="arrow-left" size={25} marginRight={40} marginLeft={0} marginTop={25} color="white" />
                     </TouchableOpacity>
                     <HeaderTitle marginTop={20}>
-                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFF' }}>Veterinária A</Text>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFF' }}>{data.nome}</Text>
                     </HeaderTitle>
                 </View>
 
