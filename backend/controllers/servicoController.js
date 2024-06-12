@@ -4,14 +4,11 @@ const Veterinaria = require('../models/Veterinaria');
 exports.criarServico = async (req, res) => {
     const { nome, preco, descricao, veterinaria } = req.body;
     try {
-        // Criar o novo serviço
         const novoServico = new Servico({ nome, preco, descricao });
         await novoServico.save();
 
-        // Obter o ID do serviço criado
         const servicoId = novoServico._id;
 
-        // Encontrar a veterinária pelo ID
         const veterinariaId = veterinaria;
         const veterinariaEncontrada = await Veterinaria.findById(veterinariaId);
 
@@ -19,10 +16,8 @@ exports.criarServico = async (req, res) => {
             return res.status(404).json({ message: 'Veterinária não encontrada' });
         }
 
-        // Adicionar o ID do serviço à lista de serviços da veterinária
         veterinariaEncontrada.servicos.push(servicoId);
 
-        // Salvar a veterinária atualizada
         await veterinariaEncontrada.save();
 
         res.status(201).json(novoServico);
@@ -98,6 +93,7 @@ exports.listarServicosPorVeterinaria = async (req, res) => {
             veterinariaId: veterinaria._id,
             nome: veterinaria.nome,
             localizacao: veterinaria.localizacao,
+            foto:veterinaria.foto,
             servicos: veterinaria.servicos
         });
     } catch (error) {

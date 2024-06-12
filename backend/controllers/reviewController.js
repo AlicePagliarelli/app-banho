@@ -134,6 +134,7 @@ exports.listarClinicasComAvaliacoes = async (req, res) => {
           nome: clinica.nome,
           localizacao: clinica.localizacao,
           servicos: clinica.servicos,
+          foto: clinica.foto,
           reviews: avaliacoes,
           mediaAvaliacoes: mediaAvaliacoes
         };

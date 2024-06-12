@@ -79,7 +79,11 @@ const Home = () => {
         <TouchableOpacity onPress={() => navigation.navigate('Veterinaria', { veterinariaId: item._id })}>
 
             <View style={styles.petItem}>
-                <Image source={item.foto ? { uri: item.foto } : pet} style={styles.petImage} />
+            <Image
+                style={styles.petImage}
+                source={{ uri: item.foto }}
+                onError={(error) => console.error('Error loading image:', error)}
+            />
                 <View style={styles.petInfo}>
                     <Text style={styles.petName}>{item.nome}</Text>
                     <View style={styles.starContainer}>
@@ -155,7 +159,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     petImage: {
-        backgroundColor: 'pink',
         width: 50,
         height: 50,
         borderRadius: 25,
