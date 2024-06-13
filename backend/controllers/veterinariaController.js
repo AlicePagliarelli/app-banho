@@ -1,5 +1,6 @@
 const Veterinaria = require('../models/Veterinaria');
 const Servico = require('../models/Servico'); // Importando o modelo Servico
+const Review = require('../models/Review');
 
 exports.criarVeterinaria = async (req, res) => {
     const { nome, localizacao } = req.body;
@@ -24,15 +25,41 @@ exports.listarVeterinarias = async (req, res) => {
 exports.buscarVeterinariaPorId = async (req, res) => {
     const id = req.params.id;
     try {
-        const veterinaria = await Veterinaria.findById(id).populate('servicos');
-        if (!veterinaria) {
-            return res.status(404).json({ message: 'Veterinária não encontrada' });
-        }
-        res.json(veterinaria);
+      const veterinaria = await Veterinaria.findById(id).populate('servicos');
+      if (!veterinaria) {
+        return res.status(404).json({ message: 'Veterinária não encontrada' });
+      }
+  
+      // Encontrar as avaliações da veterinária
+      const avaliacoes = await Review.find({ veterinaria: veterinaria._id });
+  
+      // Calcular a média das avaliações ou definir como 0 se não houver avaliações
+      const mediaAvaliacoes = avaliacoes.length > 0 ? calcularMedia(avaliacoes) : 'Sem avaliações';
+  
+      // Extraindo os dados necessários dos serviços
+      const servicos = veterinaria.servicos.map(servico => ({
+        id: servico._id,
+        nome: servico.nome,
+        preco: servico.preco
+      }));
+  
+      // Formatando a resposta
+      const resposta = {
+        nome: veterinaria.nome,
+        id: veterinaria._id,
+        mediaAvaliacoes: mediaAvaliacoes,
+        servicos: servicos,
+        comentarios: avaliacoes.map(review => ({
+          texto: review.texto,
+          avaliacao: review.rating
+        }))
+      };
+  
+      res.json(resposta);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+      res.status(500).json({ message: error.message });
+    }
+  };
 
 // Exemplo de função utilizando o modelo Servico
 exports.adicionarServicoAVeterinaria = async (req, res) => {
@@ -49,3 +76,7 @@ exports.adicionarServicoAVeterinaria = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+const calcularMedia = (avaliacoes) => {
+    const total = avaliacoes.reduce((sum, avaliacao) => sum + avaliacao.rating, 0);
+    return (total / avaliacoes.length).toFixed(1);
+  };
