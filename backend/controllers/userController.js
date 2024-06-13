@@ -3,7 +3,7 @@ const User = require('../models/User');
 // Função para registrar um novo usuário
 exports.registrarUsuario = async (req, res) => {
   const { nome, email, senha } = req.body;
-
+  console.log(req.body);
   try {
     // Verificar se o email já está em uso
     const usuarioExistente = await User.findOne({ email });
@@ -41,5 +41,23 @@ exports.autenticarUsuario = async (req, res) => {
     res.status(200).json({ message: 'Autenticado com sucesso' });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+// Função para listar todos os usuários
+exports.listarUsuarios = async (req, res) => {
+  try {
+    const usuarios = await User.find(); // Busca todos os usuários
+
+
+
+    res.status(200).json({
+      usuarios
+    });
+  } catch (error) {
+    console.error("Erro ao listar usuários:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Ocorreu um erro ao listar os usuários'
+    });
   }
 };

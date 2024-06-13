@@ -7,25 +7,41 @@ const Login = () => {
   const [emailField, setEmailField] = useState('');
   const [passwordField, setPasswordField] = useState('');
   const navigation = useNavigation();
-  const [visible, setVisible] = useState(false);
 
-  const mockUserData = [
-    { email: 'alicepagliarelli@gmail.com', password: '1234' },
-    // ... outros usuários mock, se necessário
-  ];
+  const handleSignClick = async () => {
+    if (emailField !== '' && passwordField !== '') {
+      try {
+        console.log('Iniciando requisição de login...');
+        
+        const response = await fetch('http://192.168.10.59:5000/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: emailField,
+            senha: passwordField
+          })
+        });
 
-  const handleSignClick = () => {
-    const user = mockUserData.find(
-      (user) => user.email === emailField && user.password === passwordField
-    );
+        const textResponse = await response.text(); // Obter resposta bruta
+        console.log('Resposta do servidor (texto):', textResponse);
 
-    if (user) {
-      // Autenticação bem-sucedida
-      Alert.alert("Sucesso", "Login Efetuado com Sucesso");
-      navigation.navigate('Home'); // Navega para a tela "Home"
+        if (response.ok) {
+          const json = JSON.parse(textResponse);
+          console.log('Login efetuado com sucesso:', json);
+          Alert.alert("Sucesso", "Login Efetuado com Sucesso");
+          navigation.navigate('Home'); // Navega para a tela "Home"
+        } else {
+          console.error('Falha ao efetuar login:', textResponse);
+          Alert.alert("Erro", "Email ou senha incorretos.");
+        }
+      } catch (error) {
+        console.error('Erro ao efetuar login:', error);
+        Alert.alert("Erro", "Ocorreu um erro ao tentar efetuar login. Por favor, tente novamente mais tarde.");
+      }
     } else {
-      // Autenticação falhou
-      Alert.alert("Erro", "Email ou senha incorretos.");
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
     }
   };
 
@@ -36,7 +52,6 @@ const Login = () => {
         source={{ uri: 'https://uploaddeimagens.com.br/images/004/797/086/original/pet_1.png?1718153010' }}
         onError={(error) => console.error('Error loading image:', error)}
       />
-
 
       <View style={styles.formContainer}>
         <View style={styles.inputArea}>
@@ -106,7 +121,6 @@ const styles = StyleSheet.create({
     width: 250, // Ajuste o tamanho da imagem
     height: 250, // Ajuste o tamanho da imagem
   },
-
   inputArea: {
     width: '100%',
   },
